@@ -132,12 +132,18 @@ class PCAPParallel:
         self.set_split_size()
 
         # read the first 24 bytes which is the pcap header
-        self.header = self.our_data.read(24)
 
         # now process with dpkt to pull out each packet
-        pcap = dpkt.pcap.Reader(self.dpkt_data)
+        if self.pcap_file.endswith(".pcapng"):
+            pcap = dpkt.pcapng.Reader(self.dpkt_data)
+            self.header = self.our_data.read(pcap.shb.len + pcap.idb.len)
+        else:
+            self.header = self.our_data.read(dpkt.pcap.FileHdr.__hdr_len__)
+            pcap = dpkt.pcap.Reader(self.dpkt_data)
+            
         if self.pcap_filter:
             pcap.setfilter(self.pcap_filter)
+            
         pcap.dispatch(self.maximum_count, self.dpkt_callback)
 
         # TODO: need to process the remaining bytes

@@ -1,17 +1,17 @@
 it:
-	python3 setup.py build
+	python setup.py build
 
 testit:
-	PYTHONPATH=. pytest-3
+	PYTHONPATH=. pytest
 
 package: testit packageforce
 
 packageforce:
 	rm -rf dist
-	python3 setup.py sdist bdist_wheel
+	python setup.py sdist bdist_wheel
 
 publish:
-	python3 -m twine upload -u __token__ dist/*
+	python -m twine upload -u __token__ dist/*
 
 install:
-	python3 setup.py install
+	python setup.py install
